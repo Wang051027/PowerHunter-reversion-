@@ -105,19 +105,30 @@ public partial class MonitorViewModel : ObservableObject
 
             string? thresholdStr = await PromptAsync(
                 "Threshold",
-                "App battery usage threshold (0-100):",
+                "App battery usage threshold (1-100):",
                 placeholder: "15",
                 keyboard: Keyboard.Numeric);
 
-            if (!double.TryParse(thresholdStr, out double threshold))
+            if (string.IsNullOrWhiteSpace(thresholdStr))
                 return;
 
-            threshold = Math.Clamp(threshold, 1, 100);
+            if (!double.TryParse(thresholdStr, out double threshold))
+            {
+                await ShowInfoAsync("Invalid Threshold", "Please enter a number between 1 and 100.");
+                return;
+            }
+
+            if (threshold < 1 || threshold > 100)
+            {
+                await ShowInfoAsync("Invalid Threshold", "Threshold must be between 1 and 100.");
+                return;
+            }
 
             await _alertService.CreateAlertAsync(
                 title,
                 $"Alert when any app exceeds {threshold}% battery usage share.",
                 threshold);
+
             await RefreshAlertsAsync();
             await EvaluateCurrentUsageAsync();
         }
