@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PowerHunter.ViewModels"
+             x:Class="PowerHunter.Views.AppsPage"
+             x:DataType="vm:AppsViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <RefreshView IsRefreshing="{Binding IsLoading}"
+                 Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="0" Padding="0,0,0,20">
+
+                <!-- Header -->
+                <VerticalStackLayout Padding="24,40,24,16">
+                    <Label Text="App Usage"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark=White}" />
+                    <Label Text="System-reported app activity and battery signals"
+                           FontSize="14"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                           Margin="0,4,0,0" />
+                    <Label Text="{Binding DataSourceStatusText}"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                           Margin="0,4,0,0" />
+                </VerticalStackLayout>
+
+                <!-- Permission Banner -->
+                <Border Margin="24,0,24,16"
+                        Padding="16"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Amber50}, Dark={StaticResource DarkWarnBg}}"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16"
+                        IsVisible="{Binding ShowPermissionBanner}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Label Grid.Column="0" Text="&#x26a0;&#xfe0f;" FontSize="20" VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="Grant Usage Access to read system-reported app activity stats"
+                               FontSize="13"
+                               TextColor="{AppThemeBinding Light={StaticResource Amber800}, Dark={StaticResource Amber500}}"
+                               VerticalOptions="Center" />
+                        <Button Grid.Column="2" Text="Grant" FontSize="12"
+                                TextColor="White" BackgroundColor="{StaticResource Amber500}"
+                                CornerRadius="12" Padding="12,6"
+                                Command="{Binding RequestPermissionCommand}" Shadow="{x:Null}" />
+                    </Grid>
+                </Border>
+
+                <!-- Summary Cards -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" Margin="24,0,24,24">
+                    <!-- Apps Detected -->
+                    <Border Grid.Column="0" Padding="16"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16">
+                        <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                            <Label Text="{Binding TotalAppsDetected}"
+                                   FontSize="28" FontAttributes="Bold"
+                                   TextColor="{StaticResource Emerald500}"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Apps" FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <!-- Total Time -->
+                    <Border Grid.Column="1" Padding="16"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16">
+                        <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                            <Label Text="{Binding TotalForegroundTime}"
+                                   FontSize="22" FontAttributes="Bold"
+                                   TextColor="{StaticResource Blue500}"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Screen Time" FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <!-- Top Usage Share -->
+                    <Border Grid.Column="2" Padding="16"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16">
+                        <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                            <Label Text="{Binding TopUsageSharePercent, StringFormat='{0}%'}"
+                                   FontSize="22" FontAttributes="Bold"
+                                   TextColor="{StaticResource Red500}"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Top Share" FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Empty State -->
+                <Border Padding="40" Margin="24,0,24,24"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 24"
+                        IsVisible="{Binding IsEmpty}">
+                    <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                        <Label Text="&#x1f50b;" FontSize="64" HorizontalOptions="Center" Opacity="0.3" />
+                        <Label Text="No app usage data yet"
+                               FontSize="18" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Grant Usage Access and let the system accumulate usage stats"
+                               FontSize="13"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- App List -->
+                <CollectionView ItemsSource="{Binding Apps}"
+                                SelectionMode="None"
+                                Margin="24,0,24,0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:AppUsageDisplay">
+                            <Border Padding="16" Margin="0,0,0,8"
+                                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16">
+                                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="8">
+                                    <!-- App Name + Category -->
+                                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+                                        <Label Text="{Binding AppName}"
+                                               FontSize="15" FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray50}}"
+                                               LineBreakMode="TailTruncation" />
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Border Padding="6,2"
+                                                    BackgroundColor="{Binding CategoryColor}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    Opacity="0.15">
+                                                <Label Text="{Binding Category}"
+                                                       FontSize="10"
+                                                       TextColor="{Binding CategoryColor}" />
+                                            </Border>
+                                            <Label Text="{Binding FormattedTime}"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                                   VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+
+                                    <!-- Usage Share -->
+                                    <Label Grid.Row="0" Grid.Column="1"
+                                           Text="{Binding UsageSharePercent, StringFormat='{0:F1}%'}"
+                                           FontSize="20" FontAttributes="Bold"
+                                           TextColor="{StaticResource Emerald500}"
+                                           VerticalOptions="Center" />
+
+                                    <!-- Usage Bar -->
+                                    <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                                        <BoxView HeightRequest="6"
+                                                 CornerRadius="3"
+                                                 Color="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}" />
+                                        <BoxView HeightRequest="6"
+                                                 CornerRadius="3"
+                                                 Color="{Binding CategoryColor}"
+                                                 WidthRequest="{Binding BarWidth}"
+                                                 HorizontalOptions="Start" />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PowerHunter.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:converters="clr-namespace:PowerHunter.Converters"
+             x:Class="PowerHunter.Views.SettingsPage"
+             x:Name="SettingsPageRoot"
+             x:DataType="vm:SettingsViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <converters:InverseBoolConverter x:Key="InverseBool" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,40,24,20" Spacing="0">
+
+            <!-- Appearance Section -->
+            <Label Text="Appearance"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}"
+                   Margin="0,0,0,16" />
+
+            <Border Padding="24"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    Margin="0,0,0,32">
+                <VerticalStackLayout Spacing="16">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Grid.Column="0"
+                               Text="🌓"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="App Theme"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}" />
+                            <Label Text="Choose whether Power Hunter should stay in light mode or dark mode."
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Button Grid.Column="0"
+                                Text="Light"
+                                FontSize="14"
+                                CornerRadius="14"
+                                Padding="16,10"
+                                BorderWidth="1"
+                                Command="{Binding SetLightThemeCommand}">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding IsLightModeEnabled}"
+                                             Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Blue500}" />
+                                    <Setter Property="TextColor" Value="White" />
+                                    <Setter Property="BorderColor" Value="{StaticResource Blue500}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding IsLightModeEnabled}"
+                                             Value="False">
+                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Slate600}, Dark={StaticResource Gray300}}" />
+                                    <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource DarkBorder}}" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+
+                        <Button Grid.Column="1"
+                                Text="Dark"
+                                FontSize="14"
+                                CornerRadius="14"
+                                Padding="16,10"
+                                BorderWidth="1"
+                                Command="{Binding SetDarkThemeCommand}">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding DarkModeEnabled}"
+                                             Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Blue500}" />
+                                    <Setter Property="TextColor" Value="White" />
+                                    <Setter Property="BorderColor" Value="{StaticResource Blue500}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding DarkModeEnabled}"
+                                             Value="False">
+                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Slate600}, Dark={StaticResource Gray300}}" />
+                                    <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource DarkBorder}}" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Battery Saving Section -->
+            <Label Text="Battery Saving"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}"
+                   Margin="0,0,0,16" />
+
+            <Border Padding="24"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    Margin="0,0,0,32">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <Label Grid.Column="0"
+                           Text="🌃"
+                           FontSize="20"
+                           VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="Night Auto Power Saving"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}" />
+                        <Label Text="{Binding NightAutoPowerSavingSchedule}"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                               LineBreakMode="WordWrap" />
+                    </VerticalStackLayout>
+                    <Switch x:Name="NightAutoPowerSavingSwitch"
+                            Grid.Column="2"
+                            IsToggled="{Binding NightAutoPowerSaving}"
+                            ThumbColor="White"
+                            OnColor="{StaticResource Blue500}"
+                            VerticalOptions="Center">
+                        <Switch.Behaviors>
+                            <toolkit:EventToCommandBehavior
+                                BindingContext="{Binding Path=BindingContext, Source={x:Reference NightAutoPowerSavingSwitch}}"
+                                EventName="Toggled"
+                                Command="{Binding ToggleNightAutoPowerSavingCommand}" />
+                        </Switch.Behaviors>
+                    </Switch>
+                </Grid>
+            </Border>
+
+            <!-- Notifications Section -->
+            <Label Text="Notifications"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}"
+                   Margin="0,0,0,16" />
+
+            <Border Padding="24"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    Margin="0,0,0,32">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <Label Grid.Column="0"
+                           Text="🔔" FontSize="20"
+                           VerticalOptions="Center" />
+                    <Label Grid.Column="1"
+                           Text="Enable Notifications"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}"
+                           VerticalOptions="Center" />
+                    <Switch x:Name="NotificationsSwitch"
+                            Grid.Column="2"
+                            IsToggled="{Binding Notifications}"
+                            ThumbColor="White"
+                            OnColor="{StaticResource Emerald500}"
+                            VerticalOptions="Center">
+                        <Switch.Behaviors>
+                            <toolkit:EventToCommandBehavior
+                                BindingContext="{Binding Path=BindingContext, Source={x:Reference NotificationsSwitch}}"
+                                EventName="Toggled"
+                                Command="{Binding ToggleNotificationsCommand}" />
+                        </Switch.Behaviors>
+                    </Switch>
+                </Grid>
+            </Border>
+
+            <!-- Usage Access Section (Android only) -->
+            <Label Text="Data Collection"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}"
+                   Margin="0,0,0,16"
+                   IsVisible="{Binding IsUsageStatsSupported}" />
+
+            <Border Padding="24"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    Margin="0,0,0,32"
+                    IsVisible="{Binding IsUsageStatsSupported}">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <Label Grid.Column="0"
+                           Text="&#x1f4ca;"
+                           FontSize="20"
+                           VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="Usage Access Permission"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}" />
+                        <Label FontSize="12"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding IsUsageStatsGranted}"
+                                             Value="True">
+                                    <Setter Property="Text" Value="Granted — collecting official system activity stats" />
+                                    <Setter Property="TextColor" Value="{StaticResource Emerald500}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding IsUsageStatsGranted}"
+                                             Value="False">
+                                    <Setter Property="Text" Value="Required for periodic app activity refresh" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </VerticalStackLayout>
+                    <Button Grid.Column="2"
+                            Text="Grant"
+                            FontSize="13"
+                            TextColor="White"
+                            BackgroundColor="{StaticResource Emerald500}"
+                            CornerRadius="12"
+                            Padding="16,8"
+                            Command="{Binding GrantUsageStatsCommand}"
+                            IsVisible="{Binding IsUsageStatsGranted, Converter={StaticResource InverseBool}}" />
+                </Grid>
+            </Border>
+
+            <!-- About Section -->
+            <Label Text="About"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}"
+                   Margin="0,0,0,16" />
+
+            <Border Padding="24"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    Margin="0,0,0,16">
+                <VerticalStackLayout Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="Version"
+                               FontSize="16"
+                               TextColor="{AppThemeBinding Light={StaticResource Slate600}, Dark={StaticResource Gray300}}" />
+                        <Label Grid.Column="1"
+                               Text="{Binding Version}"
+                               FontSize="16"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="Build"
+                               FontSize="16"
+                               TextColor="{AppThemeBinding Light={StaticResource Slate600}, Dark={StaticResource Gray300}}" />
+                        <Label Grid.Column="1"
+                               Text="{Binding Build}"
+                               FontSize="16"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Data Management -->
+            <Border Padding="24"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    Margin="0,0,0,32">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="Archive Historical Data"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Slate900}, Dark=White}" />
+                        <Label Text="Move records older than 30 days into local date-based archives"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1"
+                            Text="Archive"
+                            FontSize="13"
+                            TextColor="{AppThemeBinding Light={StaticResource Slate600}, Dark={StaticResource Gray300}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                            CornerRadius="12"
+                            Padding="16,8"
+                            Command="{Binding ArchiveDataCommand}" />
+                </Grid>
+            </Border>
+
+            <!-- Privacy Notice -->
+            <Border Padding="16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Blue50}, Dark={StaticResource DarkInfoBg}}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 16"
+                    Margin="0,0,0,32">
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="🔒" FontSize="20" VerticalOptions="Start" />
+                    <Label Text="All data is stored locally on your device. Nothing is uploaded to any server."
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light={StaticResource Blue600}, Dark={StaticResource Blue400}}"
+                           LineBreakMode="WordWrap"
+                           MaximumWidthRequest="280" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Footer -->
+            <VerticalStackLayout HorizontalOptions="Center" Spacing="4" Margin="0,0,0,20">
+                <Label Text="Power Hunter - Battery Usage Tracker"
+                       FontSize="13"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="Optimize your battery life"
+                       FontSize="13"
+                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

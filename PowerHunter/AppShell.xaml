@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:PowerHunter.Views"
+       x:Class="PowerHunter.AppShell"
+       Shell.FlyoutBehavior="Disabled"
+       Shell.TabBarBackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkBg}}"
+       Shell.TabBarTitleColor="{StaticResource Emerald600}"
+       Shell.TabBarUnselectedColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}">
+
+    <TabBar>
+        <ShellContent
+            Route="stats"
+            Title="Stats"
+            Icon="icon_stats"
+            ContentTemplate="{DataTemplate views:StatsPage}" />
+
+        <ShellContent
+            Route="apps"
+            Title="Apps"
+            Icon="icon_apps"
+            ContentTemplate="{DataTemplate views:AppsPage}" />
+
+        <ShellContent
+            Route="monitor"
+            Title="Monitor"
+            Icon="icon_monitor"
+            ContentTemplate="{DataTemplate views:MonitorPage}" />
+
+        <ShellContent
+            Route="settings"
+            Title="Settings"
+            Icon="icon_settings"
+            ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </TabBar>
+
+</Shell>

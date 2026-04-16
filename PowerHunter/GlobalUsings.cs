@@ -1,0 +1,17 @@
+global using System;
+global using System.Collections.Generic;
+global using System.Collections.ObjectModel;
+global using System.ComponentModel;
+global using System.Linq;
+global using System.Threading.Tasks;
+global using CommunityToolkit.Mvvm.ComponentModel;
+global using CommunityToolkit.Mvvm.Input;
+global using CommunityToolkit.Mvvm.Messaging;
+global using Microsoft.Maui;
+global using Microsoft.Maui.Controls;
+global using Microsoft.Maui.Graphics;
+global using PowerHunter.Models;
+global using PowerHunter.Data;
+global using PowerHunter.Services;
+global using PowerHunter.ViewModels;
+global using PowerHunter.Views;

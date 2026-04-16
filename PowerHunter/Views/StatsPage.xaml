@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PowerHunter.ViewModels"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             xmlns:models="clr-namespace:PowerHunter.Models"
+             xmlns:controls="clr-namespace:PowerHunter.Controls"
+             xmlns:converters="clr-namespace:PowerHunter.Converters"
+             x:Class="PowerHunter.Views.StatsPage"
+             x:Name="StatsPageRoot"
+             x:DataType="vm:StatsViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#191C1D}">
+
+    <ContentPage.Resources>
+        <converters:InverseBoolConverter x:Key="InverseBool" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- HEADER -->
+        <VerticalStackLayout Grid.Row="0" Padding="24,20,24,12" Spacing="2">
+            <Label Text="Power Hunter"
+                   FontSize="26" FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+            <Label Text="Battery Usage Tracker"
+                   FontSize="13"
+                   TextColor="{AppThemeBinding Light=#78838A, Dark=#AAB4BA}" />
+        </VerticalStackLayout>
+
+        <!-- SCROLLABLE CONTENT -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20,4,20,120"
+                                 Spacing="0"
+                                 MaximumWidthRequest="1280"
+                                 HorizontalOptions="Center">
+
+                <!-- Permission Banner -->
+                <Border Margin="0,0,0,16" Padding="16"
+                        BackgroundColor="{AppThemeBinding Light=#FFF4DF, Dark=#422006}"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                        IsVisible="{Binding ShowPermissionBanner}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Label Grid.Column="0" Text="⚠" FontSize="22" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Usage Access Required" FontSize="14" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#92400E, Dark=#F6C25B}" />
+                            <Label Text="Grant permission to view system-reported app usage stats and unlock top consumer telemetry."
+                                   FontSize="12" LineBreakMode="WordWrap"
+                                   TextColor="{AppThemeBinding Light=#B45309, Dark=#F6C25B}" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="Grant" FontSize="12" FontAttributes="Bold"
+                                TextColor="White" BackgroundColor="#F59E0B" CornerRadius="12"
+                                Padding="14,8" Command="{Binding RequestUsageStatsPermissionCommand}" Shadow="{x:Null}" />
+                    </Grid>
+                </Border>
+
+                <!-- HERO CARD -->
+                <Border Margin="0,0,0,20" Padding="24,22"
+                        BackgroundColor="#2ECC71"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 24">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="6">
+                            <Label Text="Today's Usage"
+                                   FontSize="15" TextColor="#D5F5E3" />
+                            <Label Text="{Binding BatteryPercent, StringFormat='{0:F1}%'}"
+                                   FontSize="44" FontAttributes="Bold" TextColor="White"
+                                   Margin="0,-4,0,0" />
+                            <Border Padding="10,5" HorizontalOptions="Start"
+                                    BackgroundColor="#40FFFFFF"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 12">
+                                <Label Text="{Binding SessionCount, StringFormat='🔋 {0} sessions'}"
+                                       FontSize="12" FontAttributes="Bold" TextColor="White" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Battery Icon -->
+                        <Grid Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End"
+                              WidthRequest="44" HeightRequest="68" Margin="8,0,0,0">
+                            <BoxView WidthRequest="14" HeightRequest="5" CornerRadius="2"
+                                     Color="#60FFFFFF"
+                                     VerticalOptions="Start" HorizontalOptions="Center" />
+                            <Border Margin="0,7,0,0" Padding="0"
+                                    BackgroundColor="Transparent"
+                                    Stroke="#60FFFFFF" StrokeThickness="2.5"
+                                    StrokeShape="RoundRectangle 8" />
+                            <BoxView Margin="5,14,5,5" VerticalOptions="End" CornerRadius="4"
+                                     HeightRequest="32" Color="#30FFFFFF" />
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- DAY / WEEK TOGGLE -->
+                <Border Margin="0,0,0,24" Padding="4" HorizontalOptions="Center"
+                        BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#242829}"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 16">
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="0" WidthRequest="220">
+                        <Button Grid.Column="0" Text="Day" FontSize="14" FontAttributes="Bold"
+                                Padding="0,10" CornerRadius="14"
+                                Command="{Binding SetTimeframeCommand}" CommandParameter="day" Shadow="{x:Null}">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsDayTimeframe}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#2B3031}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsDayTimeframe}" Value="False">
+                                    <Setter Property="BackgroundColor" Value="Transparent" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light=#78838A, Dark=#AAB4BA}" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+                        <Button Grid.Column="1" Text="Week" FontSize="14" FontAttributes="Bold"
+                                Padding="0,10" CornerRadius="14"
+                                Command="{Binding SetTimeframeCommand}" CommandParameter="week" Shadow="{x:Null}">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsDayTimeframe}" Value="False">
+                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#2B3031}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsDayTimeframe}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="Transparent" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light=#78838A, Dark=#AAB4BA}" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- SELECT APP (replaces Top Energy Consumers list, same data logic) -->
+                <VerticalStackLayout Margin="0,0,0,24" Spacing="12">
+                    <Label Text="Select App" FontSize="18" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                        <HorizontalStackLayout Spacing="16">
+                            <!-- Static "All Apps" entry -->
+                            <VerticalStackLayout Spacing="6" WidthRequest="60">
+                                <Border WidthRequest="52" HeightRequest="52" Padding="0"
+                                        BackgroundColor="#D5F5E3"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 26">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ResetAppSelectionCommand}" />
+                                    </Border.GestureRecognizers>
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border"
+                                                     Binding="{Binding HasSelectedApp}" Value="False">
+                                            <Setter Property="Stroke" Value="#2ECC71" />
+                                            <Setter Property="StrokeThickness" Value="2.5" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Label Text="⚡" FontSize="24"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center" />
+                                </Border>
+                                <Label Text="All Apps" FontSize="10"
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+                            </VerticalStackLayout>
+
+                            <!-- Dynamic app icons from Top Energy Consumers data -->
+                            <HorizontalStackLayout Spacing="16"
+                                                   BindableLayout.ItemsSource="{Binding Apps}"
+                                                   IsVisible="{Binding HasApps}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:TrackedAppInfo">
+                                        <VerticalStackLayout Spacing="6" WidthRequest="60">
+                                            <Border WidthRequest="52" HeightRequest="52" Padding="0"
+                                                    BackgroundColor="{Binding BadgeColor}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 16">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={x:Reference StatsPageRoot}, Path=BindingContext.SelectAppCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Border.Triggers>
+                                                    <DataTrigger TargetType="Border"
+                                                                 Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="Stroke" Value="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+                                                        <Setter Property="StrokeThickness" Value="2.5" />
+                                                    </DataTrigger>
+                                                </Border.Triggers>
+                                                <Grid>
+                                                    <Image Source="{Binding IconSource}"
+                                                           IsVisible="{Binding HasIconSource}"
+                                                           Aspect="AspectFit" Margin="8" />
+                                                    <Label Text="{Binding FallbackGlyph}"
+                                                           IsVisible="{Binding HasIconSource, Converter={StaticResource InverseBool}}"
+                                                           FontSize="22"
+                                                           HorizontalTextAlignment="Center"
+                                                           VerticalTextAlignment="Center"
+                                                           TextColor="{Binding IconColor}" />
+                                                </Grid>
+                                            </Border>
+                                            <Label Text="{Binding Name}" FontSize="10"
+                                                   HorizontalTextAlignment="Center"
+                                                   LineBreakMode="TailTruncation" MaxLines="1"
+                                                   TextColor="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+                                        </VerticalStackLayout>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </HorizontalStackLayout>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+                </VerticalStackLayout>
+
+                <!-- BATTERY TREND (unchanged) -->
+                <Border Margin="0,0,0,24" Padding="24"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1F2425}"
+                        Stroke="{AppThemeBinding Light=#E1E3E3, Dark=#2B3031}"
+                        StrokeThickness="1" StrokeShape="RoundRectangle 28">
+                    <VerticalStackLayout Spacing="18">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="Battery Trend" FontSize="20" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+                                <Label Text="{Binding TrendDescriptionText}" FontSize="12" LineBreakMode="WordWrap"
+                                       TextColor="{AppThemeBinding Light=#546067, Dark=#AAB4BA}" />
+                            </VerticalStackLayout>
+                            <Border Grid.Column="1" Padding="12,6"
+                                    BackgroundColor="{AppThemeBinding Light=#F2F4F4, Dark=#262B2C}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                                    VerticalOptions="Start">
+                                <Label Text="{Binding TelemetryBadgeText}" FontSize="11" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#546067, Dark=#24FFCD}" />
+                            </Border>
+                        </Grid>
+
+                        <lvc:CartesianChart Series="{Binding TrendSeries}"
+                                            XAxes="{Binding TrendXAxes}"
+                                            YAxes="{Binding TrendYAxes}"
+                                            HeightRequest="240"
+                                            ZoomMode="None"
+                                            TooltipPosition="Top" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- CATEGORY DISTRIBUTION (unchanged) -->
+                <Border Padding="24"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1F2425}"
+                        Stroke="{AppThemeBinding Light=#E1E3E3, Dark=#2B3031}"
+                        StrokeThickness="1" StrokeShape="RoundRectangle 28">
+                    <VerticalStackLayout Spacing="18">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Category Distribution" FontSize="20" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+                            <Label Text="{Binding SelectedScopeText, StringFormat='Scope: {0}'}"
+                                   FontSize="12" TextColor="{AppThemeBinding Light=#546067, Dark=#AAB4BA}" />
+                        </VerticalStackLayout>
+
+                        <lvc:PieChart Series="{Binding CategorySeries}"
+                                      HeightRequest="240"
+                                      InitialRotation="-90"
+                                      TooltipPosition="Hidden" />
+
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Categories}" Spacing="10">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:CategoryUsage">
+                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                        <BoxView Grid.Column="0" WidthRequest="10" HeightRequest="10"
+                                                 CornerRadius="5" VerticalOptions="Center"
+                                                 Color="{Binding HexColor}" />
+                                        <Label Grid.Column="1" Text="{Binding Name}" FontSize="13"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+                                        <Label Grid.Column="2"
+                                               Text="{Binding Percentage, StringFormat='{0:0.#}%'}"
+                                               FontSize="13" FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light=#191C1D, Dark=#F8FAFA}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                        <Border Padding="14"
+                                BackgroundColor="{AppThemeBinding Light=#F7FBFA, Dark=#232728}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 18">
+                            <Grid ColumnDefinitions="3,*" ColumnSpacing="12">
+                                <BoxView Grid.Column="0" WidthRequest="3" VerticalOptions="Fill" Color="#24FFCD" />
+                                <Label Grid.Column="1" Text="{Binding CategoryInsightText}" FontSize="12"
+                                       FontAttributes="Italic" LineBreakMode="WordWrap"
+                                       TextColor="{AppThemeBinding Light=#546067, Dark=#AAB4BA}" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- BOTTOM TAB BAR (4 tabs) -->
+        <Border Grid.Row="2"
+                Padding="12,10,12,20"
+                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1F2425}"
+                Stroke="{AppThemeBinding Light=#E1E3E3, Dark=#2B3031}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 24,24,0,0">
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                <!-- Stats (active) -->
+                <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="2">
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnStatsTapped" />
+                    </VerticalStackLayout.GestureRecognizers>
+                    <Label Text="📊" FontSize="18" HorizontalTextAlignment="Center" />
+                    <Label Text="Stats" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                           TextColor="{AppThemeBinding Light=#006B54, Dark=#24FFCD}" />
+                    <BoxView WidthRequest="6" HeightRequest="6" CornerRadius="3"
+                             HorizontalOptions="Center" Color="#24FFCD" />
+                </VerticalStackLayout>
+
+                <!-- Apps -->
+                <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="4">
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnAppsTapped" />
+                    </VerticalStackLayout.GestureRecognizers>
+                    <Label Text="⊞" FontSize="18" HorizontalTextAlignment="Center" />
+                    <Label Text="Apps" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                           TextColor="{AppThemeBinding Light=#546067, Dark=#AAB4BA}" />
+                </VerticalStackLayout>
+
+                <!-- Monitor -->
+                <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="4">
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnMonitorTapped" />
+                    </VerticalStackLayout.GestureRecognizers>
+                    <Label Text="⏱" FontSize="18" HorizontalTextAlignment="Center" />
+                    <Label Text="Monitor" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                           TextColor="{AppThemeBinding Light=#546067, Dark=#AAB4BA}" />
+                </VerticalStackLayout>
+
+                <!-- Settings -->
+                <VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="4">
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnSettingsTapped" />
+                    </VerticalStackLayout.GestureRecognizers>
+                    <Label Text="⚙" FontSize="18" HorizontalTextAlignment="Center" />
+                    <Label Text="Settings" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                           TextColor="{AppThemeBinding Light=#546067, Dark=#AAB4BA}" />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+    </Grid>
+
+</ContentPage>

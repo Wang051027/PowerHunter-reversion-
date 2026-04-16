@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PowerHunter.ViewModels"
+             xmlns:models="clr-namespace:PowerHunter.Models"
+             xmlns:converters="clr-namespace:PowerHunter.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="PowerHunter.Views.MonitorPage"
+             x:Name="MonitorPageRoot"
+             x:DataType="vm:MonitorViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <converters:InverseBoolConverter x:Key="InverseBool" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,40,24,20" Spacing="0">
+
+            <!-- Battery Guardian Card -->
+            <Border Padding="24"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    Margin="0,0,0,32">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                    <!-- Shield Icon -->
+                    <Border Grid.Column="0"
+                            WidthRequest="48" HeightRequest="48"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource Blue50}, Dark={StaticResource DarkInfoBg}}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 16"
+                            VerticalOptions="Start">
+                        <Label Text="🛡️" FontSize="24"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>
+
+                    <!-- Text -->
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="Battery Guardian"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark=White}" />
+                        <Label Text="Enable smart alerts for high battery usage"
+                               FontSize="13"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                               Margin="0,4,0,0"
+                               LineBreakMode="WordWrap" />
+                        <Label Text="{Binding GuardianStatusText}"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light={StaticResource Slate600}, Dark={StaticResource Gray300}}"
+                               Margin="0,6,0,0"
+                               LineBreakMode="WordWrap" />
+                    </VerticalStackLayout>
+
+                    <!-- Switch -->
+                    <Switch x:Name="GuardianSwitch"
+                            Grid.Column="2"
+                            IsToggled="{Binding GuardianEnabled}"
+                            ThumbColor="White"
+                            OnColor="{StaticResource Blue500}"
+                            VerticalOptions="Center">
+                        <Switch.Behaviors>
+                            <toolkit:EventToCommandBehavior
+                                BindingContext="{Binding Path=BindingContext, Source={x:Reference GuardianSwitch}}"
+                                EventName="Toggled"
+                                Command="{Binding ToggleGuardianCommand}" />
+                        </Switch.Behaviors>
+                    </Switch>
+                </Grid>
+            </Border>
+
+            <VerticalStackLayout IsVisible="{Binding HasGuardianFindings}" Margin="0,0,0,24" Spacing="12">
+                <Label Text="Recent Guardian Findings"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource Slate700}, Dark={StaticResource Gray200}}" />
+
+                <CollectionView ItemsSource="{Binding GuardianFindings}" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:BackgroundDrainEvent">
+                            <Border Padding="16"
+                                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16">
+                                <VerticalStackLayout Spacing="8">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                        <Label Grid.Column="0"
+                                               Text="{Binding AppName}"
+                                               FontSize="15"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray50}}" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding SeverityLabel}"
+                                               FontSize="11"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Amber600}"
+                                               VerticalOptions="Center" />
+                                    </Grid>
+
+                                    <Label Text="{Binding Summary}"
+                                           FontSize="12"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
+                                           LineBreakMode="WordWrap" />
+
+                                    <Label Text="{Binding SourceLabel}"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+
+                                    <Label Text="{Binding DetectedAt, StringFormat='Detected {0:MMM d, HH:mm}'}"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+            <!-- Active Alerts Header -->
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+                <Label Grid.Column="0"
+                       Text="{Binding AlertCountText}"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light={StaticResource Slate700}, Dark={StaticResource Gray200}}"
+                       VerticalOptions="Center" />
+                <Button Grid.Column="1"
+                        Text="＋ Add Alert"
+                        FontSize="13"
+                        FontAttributes="Bold"
+                        TextColor="{AppThemeBinding Light={StaticResource Slate600}, Dark={StaticResource Gray300}}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                        BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource DarkBorder}}"
+                        BorderWidth="1"
+                        CornerRadius="20"
+                        Padding="16,8"
+                        HeightRequest="38"
+                        Command="{Binding AddAlertCommand}" />
+            </Grid>
+
+            <!-- Alerts List (visible when alerts exist) -->
+            <CollectionView ItemsSource="{Binding Alerts}"
+                            IsVisible="{Binding HasAlerts}"
+                            SelectionMode="None"
+                            Margin="0,0,0,24">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:BatteryAlert">
+                        <Border Padding="16"
+                                Margin="0,0,0,8"
+                                BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                                Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 16">
+                            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                                    <Label Text="{Binding Title}"
+                                           FontSize="15"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray50}}" />
+                                    <Label Text="{Binding ThresholdPercent, StringFormat='Threshold: {0:F0}%'}"
+                                           FontSize="12"
+                                           TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+                                </VerticalStackLayout>
+                                 <Switch x:Name="AlertSwitch"
+                                         Grid.Column="1"
+                                          IsToggled="{Binding IsEnabled}"
+                                          ThumbColor="White"
+                                          OnColor="{StaticResource Emerald500}"
+                                          VerticalOptions="Center">
+                                      <Switch.Behaviors>
+                                          <toolkit:EventToCommandBehavior
+                                              BindingContext="{Binding Path=BindingContext, Source={x:Reference MonitorPageRoot}}"
+                                              EventName="Toggled"
+                                              Command="{Binding Source={x:Reference MonitorPageRoot}, Path=BindingContext.ToggleAlertCommand}"
+                                              CommandParameter="{Binding Source={x:Reference AlertSwitch}, Path=BindingContext}" />
+                                      </Switch.Behaviors>
+                                  </Switch>
+                                  <Button Grid.Column="2"
+                                          Text="✕"
+                                         FontSize="14"
+                                         TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                         BackgroundColor="Transparent"
+                                         WidthRequest="32" HeightRequest="32"
+                                         Padding="0"
+                                         Command="{Binding Source={x:Reference MonitorPageRoot}, Path=BindingContext.DeleteAlertCommand}"
+                                         CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Empty State Card (visible when no alerts) -->
+            <Border Padding="40"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    Margin="0,0,0,24"
+                    IsVisible="{Binding HasAlerts, Converter={StaticResource InverseBool}}">
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <Label Text="⚠️"
+                           FontSize="64"
+                           HorizontalOptions="Center"
+                           Opacity="0.3" />
+                    <Label Text="No alerts yet"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource Slate700}, Dark={StaticResource Gray200}}"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Tap &quot;Add Alert&quot; to create one"
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Battery Saving Tips Accordion -->
+            <Border BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkCard}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource DarkBorder}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24">
+                <VerticalStackLayout>
+                    <!-- Accordion Header -->
+                    <Grid Padding="24" ColumnDefinitions="*,Auto">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleTipsCommand}" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0"
+                               Text="Battery Saving Tips"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light={StaticResource Slate700}, Dark={StaticResource Gray200}}"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="▼"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                               VerticalOptions="Center"
+                               Rotation="{Binding TipsExpanded, Converter={StaticResource InverseBool}, ConverterParameter='rotation'}" />
+                    </Grid>
+
+                    <!-- Tips Content -->
+                    <VerticalStackLayout Padding="24,0,24,24"
+                                         Spacing="12"
+                                         IsVisible="{Binding TipsExpanded}">
+                        <BoxView HeightRequest="1"
+                                 Color="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource DarkBorder}}"
+                                 Margin="0,0,0,8" />
+
+                        <CollectionView ItemsSource="{Binding BatteryTips}" SelectionMode="None">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <HorizontalStackLayout Spacing="8" Padding="0,4">
+                                        <BoxView WidthRequest="6" HeightRequest="6"
+                                                 CornerRadius="3"
+                                                 Color="{StaticResource Blue400}"
+                                                 VerticalOptions="Start"
+                                                 Margin="0,6,0,0" />
+                                        <Label Text="{Binding .}"
+                                               FontSize="13"
+                                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                               LineBreakMode="WordWrap" />
+                                    </HorizontalStackLayout>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!--
+    Global styles matching the Tailwind + React design system.
+    Uses AppThemeBinding for automatic light/dark mode support.
+    -->
+
+    <!-- Default Label Style -->
+    <Style TargetType="Label">
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource Gray900}" Dark="{StaticResource Gray50}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <!-- Page Background -->
+    <Style TargetType="Page" ApplyToDerivedTypes="True">
+        <Setter Property="BackgroundColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource Gray50}" Dark="{StaticResource DarkBg}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Card Style (replaces Tailwind bg-white rounded-3xl shadow-sm border) -->
+    <Style x:Key="CardBorder" TargetType="Border">
+        <Setter Property="BackgroundColor">
+            <Setter.Value>
+                <AppThemeBinding Light="White" Dark="{StaticResource DarkCard}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="StrokeShape" Value="RoundRectangle 24" />
+        <Setter Property="Stroke">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource Gray100}" Dark="{StaticResource DarkBorder}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Padding" Value="24" />
+    </Style>
+
+    <!-- Section Header -->
+    <Style x:Key="SectionHeader" TargetType="Label">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource Slate900}" Dark="White" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Margin" Value="0,0,0,16" />
+    </Style>
+
+    <!-- Shell Tab Bar -->
+    <Style TargetType="TabBar">
+        <Setter Property="Shell.TabBarBackgroundColor">
+            <Setter.Value>
+                <AppThemeBinding Light="White" Dark="{StaticResource DarkBg}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource Emerald600}" />
+        <Setter Property="Shell.TabBarUnselectedColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource Gray400}" Dark="{StaticResource Gray500}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Switch (platform-consistent) -->
+    <Style TargetType="Switch">
+        <Setter Property="OnColor" Value="{StaticResource Emerald500}" />
+        <Setter Property="ThumbColor" Value="White" />
+    </Style>
+
+    <!-- Primary Button -->
+    <Style x:Key="PrimaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource Emerald500}" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="24,12" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <!-- Outline Button -->
+    <Style x:Key="OutlineButton" TargetType="Button">
+        <Setter Property="BackgroundColor">
+            <Setter.Value>
+                <AppThemeBinding Light="White" Dark="{StaticResource DarkCard}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource Slate600}" Dark="{StaticResource Gray300}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource Gray200}" Dark="{StaticResource DarkBorder}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="16,8" />
+    </Style>
+
+</ResourceDictionary>

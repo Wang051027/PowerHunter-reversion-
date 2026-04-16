@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Battery and usage stats permissions -->
+    <uses-permission android:name="android.permission.BATTERY_STATS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- Required for UsageStatsManager (app usage data).
+         User must manually grant this in Settings > Apps > Special access > Usage access -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+                     tools:ignore="ProtectedPermissions" />
+
+    <!-- Required on Android 11+ so we can resolve icons/labels for apps surfaced by UsageStatsManager. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+                     tools:ignore="QueryAllPackagesPermission" />
+
+    <!-- Local notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Foreground service for battery monitoring -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/appicon"
+        android:roundIcon="@mipmap/appicon_round"
+        android:supportsRtl="true"
+        android:label="Power Hunter">
+
+        <!-- Notification receiver for Plugin.LocalNotification -->
+        <receiver android:name="Plugin.LocalNotification.Platform.Droid.ScheduledAlarmReceiver"
+                  android:enabled="true"
+                  android:exported="false" />
+        <receiver android:name="Plugin.LocalNotification.Platform.Droid.BootReceiver"
+                  android:enabled="true"
+                  android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

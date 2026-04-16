@@ -1,0 +1,86 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('osx'))">$(TargetFrameworks);net9.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>PowerHunter</RootNamespace>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- Display name -->
+    <ApplicationTitle>Power Hunter</ApplicationTitle>
+
+    <!-- App Identifier -->
+    <ApplicationId>com.powerhunter.app</ApplicationId>
+
+    <!-- Versions -->
+    <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+    <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers>
+
+    <!-- Windows: unpackaged deployment (no MSIX) -->
+    <WindowsPackageType Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">None</WindowsPackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- App Icon -->
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" Color="#10B981" />
+
+    <!-- Splash Screen -->
+    <MauiSplash Include="Resources\Splash\splash.svg" Color="#10B981" BaseSize="128,128" />
+
+    <!-- Images -->
+    <MauiImage Include="Resources\Images\*" />
+
+    <!-- Custom Fonts -->
+    <MauiFont Include="Resources\Fonts\*" />
+
+    <!-- Raw Assets -->
+    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- .NET MAUI (explicit for .NET 9) -->
+    <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.51" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.51" />
+
+    <!-- CommunityToolkit.Mvvm for MVVM pattern -->
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+
+    <!-- SQLite for local storage -->
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
+
+    <!-- LiveCharts2 for chart visualization -->
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.Maui" Version="2.0.0-rc5.3" />
+
+    <!-- MAUI CommunityToolkit for extra controls -->
+    <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
+  </ItemGroup>
+
+  <Target Name="CopyMacCatalystRuntimeConfigForVisualStudio"
+          AfterTargets="Build;Publish"
+          Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+    <PropertyGroup>
+      <!-- VS archive/package can hold on to the root output path even though MacCatalyst writes RID-specific outputs. -->
+      <_MacCatalystRuntimeConfigSource Condition="Exists('$(OutputPath)maccatalyst-x64\$(AssemblyName).runtimeconfig.json')">$(OutputPath)maccatalyst-x64\$(AssemblyName).runtimeconfig.json</_MacCatalystRuntimeConfigSource>
+      <_MacCatalystRuntimeConfigSource Condition="'$(_MacCatalystRuntimeConfigSource)' == '' and Exists('$(OutputPath)maccatalyst-arm64\$(AssemblyName).runtimeconfig.json')">$(OutputPath)maccatalyst-arm64\$(AssemblyName).runtimeconfig.json</_MacCatalystRuntimeConfigSource>
+    </PropertyGroup>
+
+    <Copy SourceFiles="$(_MacCatalystRuntimeConfigSource)"
+          DestinationFiles="$(OutputPath)$(AssemblyName).runtimeconfig.json"
+          SkipUnchangedFiles="true"
+          Condition="'$(_MacCatalystRuntimeConfigSource)' != ''" />
+  </Target>
+
+</Project>

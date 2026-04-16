@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!--
+    Color palette mapped from Tailwind CSS classes used in the React frontend.
+    Ensures pixel-perfect color matching between web and native.
+    -->
+
+    <!-- Emerald / Primary -->
+    <Color x:Key="Emerald50">#ECFDF5</Color>
+    <Color x:Key="Emerald100">#D1FAE5</Color>
+    <Color x:Key="Emerald500">#10B981</Color>
+    <Color x:Key="Emerald600">#059669</Color>
+
+    <!-- Blue -->
+    <Color x:Key="Blue50">#EFF6FF</Color>
+    <Color x:Key="Blue400">#60A5FA</Color>
+    <Color x:Key="Blue500">#3B82F6</Color>
+    <Color x:Key="Blue600">#2563EB</Color>
+
+    <!-- Purple -->
+    <Color x:Key="Purple300">#C4B5FD</Color>
+    <Color x:Key="Purple600">#9333EA</Color>
+
+    <!-- Rose / Pink -->
+    <Color x:Key="Rose300">#FDA4AF</Color>
+    <Color x:Key="Pink300">#F9A8D4</Color>
+    <Color x:Key="Pink500">#EC4899</Color>
+
+    <!-- Orange -->
+    <Color x:Key="Orange300">#FDBA74</Color>
+    <Color x:Key="Orange500">#F97316</Color>
+
+    <!-- Red -->
+    <Color x:Key="Red300">#FCA5A5</Color>
+    <Color x:Key="Red500">#EF4444</Color>
+
+    <!-- Amber -->
+    <Color x:Key="Amber50">#FFFBEB</Color>
+    <Color x:Key="Amber500">#F59E0B</Color>
+    <Color x:Key="Amber600">#D97706</Color>
+    <Color x:Key="Amber800">#92400E</Color>
+
+    <!-- Green -->
+    <Color x:Key="Green300">#86EFAC</Color>
+
+    <!-- Gray / Slate (UI structure) -->
+    <Color x:Key="Gray50">#F9FAFB</Color>
+    <Color x:Key="Gray100">#F3F4F6</Color>
+    <Color x:Key="Gray200">#E5E7EB</Color>
+    <Color x:Key="Gray300">#D1D5DB</Color>
+    <Color x:Key="Gray400">#9CA3AF</Color>
+    <Color x:Key="Gray500">#6B7280</Color>
+    <Color x:Key="Gray600">#4B5563</Color>
+    <Color x:Key="Gray900">#111827</Color>
+
+    <Color x:Key="Slate600">#475569</Color>
+    <Color x:Key="Slate700">#334155</Color>
+    <Color x:Key="Slate900">#0F172A</Color>
+
+    <!-- Semantic Colors -->
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#000000</Color>
+
+    <!-- Dark Theme Base Colors -->
+    <Color x:Key="DarkBg">#111827</Color>
+    <Color x:Key="DarkCard">#1F2937</Color>
+    <Color x:Key="DarkBorder">#374151</Color>
+    <Color x:Key="DarkInfoBg">#1E3A5F</Color>
+    <Color x:Key="DarkWarnBg">#422006</Color>
+
+</ResourceDictionary>
